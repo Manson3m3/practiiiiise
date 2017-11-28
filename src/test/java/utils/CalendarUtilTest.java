@@ -113,5 +113,12 @@ public class CalendarUtilTest {
         int[] expect ={4,5,4,4};
         Assert.assertArrayEquals(actuals,expect);
     }
-
+    @Test
+    public void testGetMonthWeekNum()throws Exception {
+        int[] actuals = new int[2];
+        actuals[0] = CalendarUtil.getMonthWeekNum(2017,1);
+        actuals[1] = CalendarUtil.getMonthWeekNum(2017,10);
+        int[] expect = {1,40};
+        Assert.assertArrayEquals(expect,actuals);
+    }
 } 

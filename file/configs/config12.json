@@ -2,6 +2,7 @@
   "BaseDir":"./file/Integration_testing/",
   "Year":"2017",
   "Month":"10",
+  "新员工专属":"xyg",
   "Mapping表OA员工信息表":{
     "FileName":"测试12.xls",
     "SheetName":"Mapping表OA员工信息Test"
@@ -23,10 +24,7 @@
     "SheetName":"XX表Test"
   },
   "WorkType表":{
-	"FileName":"测试12.xls",
-	"SheetName":"Sheet7Test"
-  },
-  "输出路径":{
-    "OutFileName":"./file/"
+    "FileName":"测试12.xls",
+    "SheetName":"Sheet7Test"
   }
 }

@@ -62,7 +62,7 @@ public class Constant {
 
     //Json路径
     public static class JsonPath {
-        public static final String JSONPATH = JarToolUtil.getJarDir() + "\\config.json";
+        public static String JSONPATH = JarToolUtil.getJarDir() + "\\config.json";
     }
 
     //Handle

@@ -166,6 +166,33 @@ public final class CalendarUtil {
     }
 
     /**
+     * 获取某月第一周的年周数
+     * @param year
+     * @param month
+     * @return
+     */
+    public static Integer getMonthWeekNum(int year,int month) {
+        String strMonth = month<10?("0"+month):String.valueOf(month);
+        int weekNum;
+        try {
+            calendar.setTime(simpleDateFormat.parse(year + "-" + strMonth + "-01"));
+            String date = simpleDateFormat.format(calendar.getTime());
+            if (calendar.get(Calendar.DAY_OF_WEEK) - 1 >= 1 && calendar.get(Calendar.DAY_OF_WEEK) - 1 <= 3) {
+                return getWeekNum(date);
+            }
+
+            while (!inThisMonthAndIsMonday(year, month, date)) {
+                calendar.add(Calendar.DAY_OF_WEEK,1);
+                date = simpleDateFormat.format(calendar.getTime());
+            }
+            weekNum = getWeekNum(date);
+        } catch (Exception e) {
+            logger.severe(e.getMessage());
+            return -1;
+        }
+        return weekNum;
+    }
+    /**
      * 验证是否同一天
      *
      * @param date1

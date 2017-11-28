@@ -20,7 +20,6 @@ public class LogUtil {
     private static final SimpleDateFormat sdf = new SimpleDateFormat(
             "yyyy-MM-dd");
 
-    public static final String LOG_FOLDER_NAME = setOutputpath();
 
     private static final String LOG_FILE_SUFFIX = ".log";
 
@@ -30,7 +29,7 @@ public class LogUtil {
 
     private synchronized static String getLogFilePath(String outputPath) {
         StringBuffer logFilePath = new StringBuffer();
-        logFilePath.append(LOG_FOLDER_NAME);
+        logFilePath.append(OUTPUTPATH);
 
         File file = new File(logFilePath.toString());
         if (!file.exists())
@@ -80,6 +79,7 @@ public class LogUtil {
         try {
             //文件日志内容标记为可追加
             fileHandler = new FileHandler(getLogFilePath(LogUtil.OUTPUTPATH), APPEND_MODE);
+            fileHandler.setEncoding("UTF-8");
             return fileHandler;
         } catch (IOException e) {
             e.printStackTrace();
@@ -94,7 +94,7 @@ public class LogUtil {
      */
     private static String setOutputpath() {
         String outputPath = null;
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/ddhh:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/ddHH:mm:ss");
         outputPath = JarToolUtil.getJarDir() + "\\" + dateFormat.format(new Date()).replaceAll("/", "").replaceAll(":", "");
         return outputPath;
     }
@@ -108,10 +108,21 @@ public class LogUtil {
         // Create a DateFormat to format the logger timestamp.
         private static final DateFormat df = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss.SSS");
 
+        private static final String Warning = "WARNING";
+        private static final String Error = "ERROR";
+
         public String format(LogRecord record) {
             StringBuilder builder = new StringBuilder(1000);
-            builder.append("[").append(record.getLevel()).append("] - ");
+            if (record.getLevel() == Level.CONFIG) {
+                builder.append("[").append(Warning + "] - ");
+            } else if (record.getLevel() == Level.SEVERE){
+                builder.append("[").append(Error + "] - ");
+            } else{
+                builder.append("[").append(record.getLevel() + "] - ");
+            }
+
             builder.append(df.format(new Date(record.getMillis()))).append(" - ");
+
             builder.append("[").append(record.getSourceClassName()).append(".");
             builder.append(record.getSourceMethodName()).append("]  \r\n");
             builder.append(" \t\t ");

@@ -35,6 +35,7 @@ public class WorkHoursMonthValidator {
         }
         int year = Integer.parseInt(LoadConfigUtil.getYear());
         int month = Integer.parseInt(LoadConfigUtil.getMonth());
+        String rookieId = LoadConfigUtil.getNewStaff();
         if (!isWeeksLegal(workingHoursMonthReportList)) {
             return false;
         }
@@ -53,7 +54,10 @@ public class WorkHoursMonthValidator {
                             + workingHoursMonthReport.getStartDate() + "项目编号" + workingHoursMonthReport.getProjectId());
                     return false;
                 }
-
+                if (workingHoursMonthReport.getProjectId().equals(rookieId)) {
+                    logger.config("该员工为新员工！数据信息为:姓名" + workingHoursMonthReport.getApplicant() + " 申请日期"
+                            + workingHoursMonthReport.getStartDate() + "项目编号" + workingHoursMonthReport.getProjectId());
+                }
                 //验证工作期始
                 String startDate = workingHoursMonthReport.getStartDate();
                 if (!(CalendarUtil.inThisMonthAndIsMonday(year, month, startDate) && CalendarUtil.isMonday(startDate))) {
@@ -151,7 +155,7 @@ public class WorkHoursMonthValidator {
             for (WorkingHoursMonthReport workingHoursMonthReport : tempWorkingHoursMonthReportList) {
                 if (workingHoursMonthReport.getProjectId().equals(Constant.NewStaff.NEW_STAFF)) {
                     if (CalendarUtil.getWeekNum(workingHoursMonthReport.getStartDate().toString()) != minWeek) {
-                        logger.severe("新员工" + workingHoursMonthReport.getApplicant() + "专属项目编号的周数不是最小周");
+                        logger.severe("新员工" + workingHoursMonthReport.getApplicant() + "专属项目编号的周数不是该员工的当月第一周");
                         return false;
                     }
                 }
@@ -163,10 +167,13 @@ public class WorkHoursMonthValidator {
                     return false;
                 }
             }
-            //检验周数是否足够
+            //检验是否缺少某周
             if (weekNumList.size() != CalendarUtil.weeksOfMonth(tempWorkingHoursMonthReportList.get(0).getStartDate())) {
-                logger.info(tempWorkingHoursMonthReportList.get(0).getApplicant() + " " + "周数不足");
-                return false;
+                if(minWeek != CalendarUtil.getMonthWeekNum(Integer.parseInt(LoadConfigUtil.getYear()),Integer.parseInt(LoadConfigUtil.getMonth()))){
+                    logger.config(tempWorkingHoursMonthReportList.get(0).getApplicant()+"缺少"+LoadConfigUtil.getMonth()+"月第一周");
+                }else{
+                    logger.config(tempWorkingHoursMonthReportList.get(0).getApplicant()+"缺少"+LoadConfigUtil.getMonth()+"月最后一周");
+                }
             }
         }
         logger.info("工时月报表周数规范性检验通过");

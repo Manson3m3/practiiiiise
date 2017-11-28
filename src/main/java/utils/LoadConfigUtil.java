@@ -15,11 +15,13 @@ import java.util.logging.Logger;
  * Created by Tao.Jiang on 2017/11/8.
  */
 public class LoadConfigUtil {
+    private static final Logger logger= LogUtil.setLoggerHanlder(Logger.getLogger(LogUtil.MY_LOGGER),LogUtil.OUTPUTPATH);
 
     private LoadConfigUtil() {
 
     }
 
+    private static List<String > contentArrayList = getJsonContents();
     /**
      * 从json文件中读取内容，放入List并返回
      *
@@ -47,6 +49,7 @@ public class LoadConfigUtil {
             return contentArrayList;
         } catch (Exception e) {
             e.printStackTrace();
+            logger.severe("找不到json文件");
         }
         return null;
     }
@@ -57,7 +60,7 @@ public class LoadConfigUtil {
      */
     public static SheetForm getFilesAndSheets(String handle) throws Exception {
         SheetForm sheetForm = new SheetForm();
-        List<String> contentList = getJsonContents();
+        List<String> contentList = contentArrayList;
         //装载每次用“:”切割出的数组
         String[] tempContentSplited = null;
         try {
@@ -89,7 +92,7 @@ public class LoadConfigUtil {
      * @throws Exception
      */
     public static String getBaseDir() {
-        List<String> contentList = getJsonContents();
+        List<String> contentList = contentArrayList;
         String baseDir = null;
         baseDir = contentList.get(Constant.JsonRowNum.BASEDIR_ROW_NUM).replaceAll("BaseDir:", "");
         return baseDir;
@@ -102,7 +105,7 @@ public class LoadConfigUtil {
      * @throws Exception
      */
     public static String getYear() {
-        List<String> contentList = getJsonContents();
+        List<String> contentList = contentArrayList;
         String year = null;
         year = contentList.get(Constant.JsonRowNum.YEAR_ROW_NUM).replaceAll("Year:", "");
         return year;
@@ -115,7 +118,7 @@ public class LoadConfigUtil {
      * @throws Exception
      */
     public static String getMonth() {
-        List<String> contentList = getJsonContents();
+        List<String> contentList = contentArrayList;
         String month = null;
         month = contentList.get(Constant.JsonRowNum.MONTH_ROW_NUM).replaceAll("Month:", "");
         return month;
@@ -139,7 +142,7 @@ public class LoadConfigUtil {
      */
     public static String getNewStaff() {
         String newStaff = null;
-        newStaff = getJsonContents().get(Constant.JsonRowNum.NEW_STAFF_ROW_NUM).replaceAll("新员工专属:","");
+        newStaff = contentArrayList.get(Constant.JsonRowNum.NEW_STAFF_ROW_NUM).replaceAll("新员工专属:","");
         return newStaff;
     }
 

@@ -67,6 +67,11 @@ public final class ExcelUtil {
             //计算实际存在的行数，列数
             int rows = 1;
             int columns = 0;
+            if(hssfSheet==null){
+                logger.severe("找不到"+sheetName+"表");
+                fileInputStream.close();
+                return null;
+            }
             for (; rows < hssfSheet.getPhysicalNumberOfRows(); rows++) {
                 //XX表
                 if (sheetName.equals(LoadConfigUtil.getFilesAndSheets(Constant.Handle.XX_HANDLE).getSheetName())) {
