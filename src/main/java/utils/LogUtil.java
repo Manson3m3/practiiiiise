@@ -1,9 +1,13 @@
 package utils;
 
+import constant.Constant;
+import entity.ErrorRecord;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.*;
 
@@ -26,6 +30,9 @@ public class LogUtil {
     private static final FileHandler fileHandler = getFileHandler();
 
     private static MyLogFormatter myLogFormatter = new MyLogFormatter();
+    public static ArrayList<ErrorRecord> errorRecords = new ArrayList<>();
+    public static ArrayList<ErrorRecord> errorRecords2 = new ArrayList<>();
+    public static String stage;
 
     private synchronized static String getLogFilePath(String outputPath) {
         StringBuffer logFilePath = new StringBuffer();
@@ -99,6 +106,15 @@ public class LogUtil {
         return outputPath;
     }
 
+    public static String[][] errorRecordsToArray(ArrayList<ErrorRecord> errorRecords) {
+        String[][] strings = new String[errorRecords.size() + 1][5];
+        strings[0] = Constant.SheetTitleArray.ERROR;
+        for (int i = 0; i < errorRecords.size(); i++) {
+            strings[i + 1] = errorRecords.get(i).toArray();
+        }
+        return strings;
+    }
+
     /**
      * Created by Tao.Jiang on 2017/11/17.
      */
@@ -115,9 +131,9 @@ public class LogUtil {
             StringBuilder builder = new StringBuilder(1000);
             if (record.getLevel() == Level.CONFIG) {
                 builder.append("[").append(Warning + "] - ");
-            } else if (record.getLevel() == Level.SEVERE){
+            } else if (record.getLevel() == Level.SEVERE) {
                 builder.append("[").append(Error + "] - ");
-            } else{
+            } else {
                 builder.append("[").append(record.getLevel() + "] - ");
             }
 
@@ -128,6 +144,8 @@ public class LogUtil {
             builder.append(" \t\t ");
             builder.append(formatMessage(record));
             builder.append(" \r\n\r\n ");
+
+
             return builder.toString();
         }
 
@@ -138,5 +156,7 @@ public class LogUtil {
         public String getTail(Handler handler) {
             return super.getTail(handler);
         }
+
     }
+
 }

@@ -1,0 +1,15 @@
+{
+  "BaseDir2":"E:\\step1\\",
+  "部门表":{
+    "FileName":"STEP2配置.xls",
+    "SheetName":"1.部门表"
+  },
+  "OA项目表":{
+    "FileName":"STEP2配置.xls",
+    "SheetName":"2.OA项目表"
+  },
+  "科目代码表":{
+    "FileName":"STEP2配置.xls",
+    "SheetName":"3.科目代码表"
+  }
+}

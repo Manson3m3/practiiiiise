@@ -2,6 +2,7 @@ package utils;
 
 
 import constant.Constant;
+import exception.DataException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,13 +17,13 @@ import java.util.logging.Logger;
  */
 public final class CalendarUtil {
 
-    private static final Logger logger = LogUtil.setLoggerHanlder(Logger.getLogger(LogUtil.MY_LOGGER), LogUtil.OUTPUTPATH);
     //日期格式
     public static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    //日历工具
-    private static Calendar calendar = Calendar.getInstance();
     //一周天数
     public static final int WEEKNUMBERS = 7;
+    private static final Logger logger = LogUtil.setLoggerHanlder(Logger.getLogger(LogUtil.MY_LOGGER), LogUtil.OUTPUTPATH);
+    //日历工具
+    private static Calendar calendar = Calendar.getInstance();
 
     private CalendarUtil() {
 
@@ -34,14 +35,13 @@ public final class CalendarUtil {
      *
      * @return
      */
-    public static String[][] getWeekNums() {
-        Date start,end;
-        String year = LoadConfigUtil.getYear();
+    public static String[][] getWeekNums(int year) {
+        Date start, end;
         try {
             start = simpleDateFormat.parse(year + "-01-01");
             end = simpleDateFormat.parse(year + "-12-31");
         } catch (ParseException e) {
-            logger.severe("解析日期出错，获取周数表错误:"+e.getMessage());
+            logger.severe("解析日期出错，获取周数表错误:" + e.getMessage());
             return null;
         }
         //获取相差的天数
@@ -57,9 +57,9 @@ public final class CalendarUtil {
         //将起始日期调整到周一
         int weekNum = calendar.get(Calendar.DAY_OF_WEEK) - 1;
         if (weekNum == 0) {
-            calendar.add(Calendar.DAY_OF_WEEK,1);
+            calendar.add(Calendar.DAY_OF_WEEK, 1);
         }
-        if (!(1 == weekNum)&&weekNum!=0) {
+        if (!(1 == weekNum) && weekNum != 0) {
             calendar.add(Calendar.DAY_OF_WEEK, 8 - weekNum);
         }
         //在截止日期前写入日期对应周数
@@ -122,7 +122,7 @@ public final class CalendarUtil {
      * @return
      * @throws Exception
      */
-    public static boolean isMonday(String date) throws Exception {
+    public static boolean isMonday(String date) throws ParseException {
         calendar.setTime(simpleDateFormat.parse(date));
         calendar.setFirstDayOfWeek(Calendar.MONDAY);
         return calendar.get(Calendar.DAY_OF_WEEK) - 1 == 1;
@@ -167,12 +167,13 @@ public final class CalendarUtil {
 
     /**
      * 获取某月第一周的年周数
+     *
      * @param year
      * @param month
      * @return
      */
-    public static Integer getMonthWeekNum(int year,int month) {
-        String strMonth = month<10?("0"+month):String.valueOf(month);
+    public static Integer getMonthWeekNum(int year, int month) {
+        String strMonth = month < 10 ? ("0" + month) : String.valueOf(month);
         int weekNum;
         try {
             calendar.setTime(simpleDateFormat.parse(year + "-" + strMonth + "-01"));
@@ -182,7 +183,7 @@ public final class CalendarUtil {
             }
 
             while (!inThisMonthAndIsMonday(year, month, date)) {
-                calendar.add(Calendar.DAY_OF_WEEK,1);
+                calendar.add(Calendar.DAY_OF_WEEK, 1);
                 date = simpleDateFormat.format(calendar.getTime());
             }
             weekNum = getWeekNum(date);
@@ -192,6 +193,7 @@ public final class CalendarUtil {
         }
         return weekNum;
     }
+
     /**
      * 验证是否同一天
      *
@@ -227,4 +229,49 @@ public final class CalendarUtil {
         return -1;
     }
 
+    /**
+     * 判断目标日期是否在日期段内
+     *
+     * @param time
+     * @param from
+     * @param end
+     * @return
+     * @throws DataException
+     */
+    public static boolean isBetween(String time, String from, String end) throws DataException {
+        if (time == null || from == null || end == null) {
+            throw new DataException("日期检测数据不可以为空！");
+        }
+        if (time.equals(from) || time.equals(end)) {
+            return true;
+        }
+        //映射入参
+        Date t, f, e;
+        try {
+            t = simpleDateFormat.parse(time);
+            f = simpleDateFormat.parse(from);
+            e = simpleDateFormat.parse(end);
+            return t.after(f) && t.before(e);
+        } catch (ParseException e1) {
+            logger.severe(e1.getMessage() + "日期解析出错,目标时间：" + time + "，起止时间：" + from + "，终止时间：" + end);
+            throw new DataException("日期解析出错！");
+        }
+    }
+
+    /**
+     * 获取七天后的日期
+     *
+     * @param date
+     * @return
+     */
+    public static String get7daysAfter(String date) {
+        try {
+            calendar.setTime(simpleDateFormat.parse(date));
+            calendar.add(Calendar.WEEK_OF_MONTH, 1);
+            return simpleDateFormat.format(calendar.getTime());
+        } catch (ParseException e) {
+            logger.severe("解析日期出错，出错日期为" + date);
+            return null;
+        }
+    }
 }

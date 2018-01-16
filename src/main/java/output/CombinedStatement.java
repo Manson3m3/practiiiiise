@@ -1,16 +1,13 @@
 package output;
 
 import constant.Constant;
-import entity.WorkingHoursMonthReport;
 import load.DataProcessor;
 import utils.CalendarUtil;
 import utils.LoadConfigUtil;
 import utils.LogUtil;
-import validator.WorkHoursMonthValidator;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -121,6 +118,7 @@ public class CombinedStatement {
     /**
      * 工时月报表添加一列为编号
      * 并且删除新员工行
+     *
      * @param workHoursMonthData
      * @return
      */
@@ -131,21 +129,21 @@ public class CombinedStatement {
         //新员工项目编号
         String rookieId = LoadConfigUtil.getNewStaff();
         int rookieNum = 0;
-        for (String[] str: workHoursMonthData) {
+        for (String[] str : workHoursMonthData) {
 
             if (str[4].equals(rookieId)) {
                 rookieNum++;
             }
         }
-        String[][] strings = new String[workHoursMonthData.length-rookieNum][Constant.SheetColumnNum.WORKING_HOURS_MONTH_REPORT_COL_NUM + 1];
+        String[][] strings = new String[workHoursMonthData.length - rookieNum][Constant.SheetColumnNum.WORKING_HOURS_MONTH_REPORT_COL_NUM + 1];
         int tmp = 0;
         for (int i = 0; i < workHoursMonthData.length; i++) {
             if (workHoursMonthData[i][4].equals(rookieId)) {
                 tmp++;
             }
             if (!workHoursMonthData[i][4].equals(rookieId)) {
-                System.arraycopy(workHoursMonthData[i], 0, strings[i-tmp], 0, Constant.SheetColumnNum.WORKING_HOURS_MONTH_REPORT_COL_NUM);
-                strings[i-tmp][Constant.SheetColumnNum.WORKING_HOURS_MONTH_REPORT_COL_NUM] = DataProcessor.getIdbyName(strings[i-tmp][0]);
+                System.arraycopy(workHoursMonthData[i], 0, strings[i - tmp], 0, Constant.SheetColumnNum.WORKING_HOURS_MONTH_REPORT_COL_NUM);
+                strings[i - tmp][Constant.SheetColumnNum.WORKING_HOURS_MONTH_REPORT_COL_NUM] = DataProcessor.getIdbyName(strings[i - tmp][0]);
             }
         }
         return strings;

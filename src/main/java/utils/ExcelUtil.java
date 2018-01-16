@@ -1,7 +1,6 @@
 package utils;
 
 import com.alibaba.fastjson.JSONObject;
-import constant.Constant;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -12,7 +11,6 @@ import org.apache.poi.ss.usermodel.Row;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.logging.Logger;
 
 /**
@@ -67,23 +65,37 @@ public final class ExcelUtil {
             //计算实际存在的行数，列数
             int rows = 1;
             int columns = 0;
-            if(hssfSheet==null){
-                logger.severe("找不到"+sheetName+"表");
+            if (hssfSheet == null) {
+                logger.severe("找不到" + sheetName + "表");
                 fileInputStream.close();
                 return null;
             }
             for (; rows < hssfSheet.getPhysicalNumberOfRows(); rows++) {
-                //XX表
-                if (sheetName.equals(LoadConfigUtil.getFilesAndSheets(Constant.Handle.XX_HANDLE).getSheetName())) {
-                    if (hssfSheet.getRow(rows).getCell(0).getStringCellValue().equals("")) {
+//                //XX表
+//                if (sheetName.equals(LoadConfigUtil.getFilesAndSheets(Constant.Handle.XX_HANDLE).getSheetName())) {
+//                    if (hssfSheet.getRow(rows).getCell(0).getStringCellValue().equals("")) {
+//                        break;
+//                    }
+//                }
+//                //其他表
+//                else {
+//                    if (hssfSheet.getRow(rows).getCell(0) == null) {
+//                        break;
+//                    }
+//                }
+
+                if (hssfSheet.getRow(rows).getCell(0) == null) {
+                    break;
+                }
+                boolean rowEmpty = true;
+                for(int i = 0 ;i <hssfSheet.getRow(rows).getLastCellNum();i++){
+                    if(!hssfSheet.getRow(rows).getCell(i).toString().equals("")){
+                        rowEmpty = false;
                         break;
                     }
                 }
-                //其他表
-                else {
-                    if (hssfSheet.getRow(rows).getCell(0) == null) {
-                        break;
-                    }
+                if(rowEmpty == true){
+                    break;
                 }
                 columns = columns > hssfSheet.getRow(rows).getPhysicalNumberOfCells() ? columns : hssfSheet.getRow(rows).getPhysicalNumberOfCells();
             }
@@ -129,7 +141,7 @@ public final class ExcelUtil {
      */
     public static boolean writeExcel(String[][] result, String outputPath, String outputSheetName, int startRow, int[] typeArray) {
         FileInputStream fileInputStream = null;
-        boolean ifSucceed =false;
+        boolean ifSucceed = false;
         if (result == null) {
             logger.severe("数据有错误，不能写入");
             return ifSucceed;
@@ -157,11 +169,13 @@ public final class ExcelUtil {
                 Cell cell = row.createCell(j);
                 cell.setCellValue(result[startRow - 1][j]);
             }
+            //设置为两位小数
+            HSSFCellStyle cellStyle = hssfWorkbook.createCellStyle();
+            cellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0.00"));
             //写入数据
             for (int i = startRow; i < result.length + startRow - 1; i++) {
                 row = hssfSheet.createRow(i);
-                HSSFCellStyle cellStyle = hssfWorkbook.createCellStyle();
-                cellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0.00"));
+
                 for (int j = 0; j < result[0].length; j++) {
                     Cell cell = row.createCell(j);
                     switch (typeArray[j]) {

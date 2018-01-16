@@ -1,6 +1,8 @@
 package validator;
 
+import constant.Constant;
 import entity.BaseSalary;
+import entity.ErrorRecord;
 import entity.MappingOA;
 import load.DataProcessor;
 import utils.LogUtil;
@@ -14,28 +16,28 @@ import java.util.logging.Logger;
  */
 public class BaseSalaryValidator {
 
-    private static final Logger logger  = LogUtil.setLoggerHanlder(Logger.getLogger(LogUtil.MY_LOGGER),LogUtil.OUTPUTPATH);
+    private static final Logger logger  = LogUtil.setLoggerHanlder(Logger.getLogger(LogUtil.MY_LOGGER), LogUtil.OUTPUTPATH);
     public static boolean isLegal(List<BaseSalary> baseSalaryList) {
         if (baseSalaryList == null || baseSalaryList.isEmpty()) {
             return false;
         }
         List<MappingOA> mappingOAList = DataProcessor.mappingOAList;
-        if (!MappingOAValidator.isLegal(mappingOAList)) {
-           logger.severe("MappingOA表不合规格！");
-            return false;
-        }
         if (baseSalaryList.size() != mappingOAList.size()) {
-           logger.severe("基本工资表和mappingOA表数据量不符!");
+            logger.severe("基本工资表和mappingOA表员工数据量不符!");
             return false;
         }
         for (BaseSalary b:baseSalaryList) {
             MappingOA mappingOA = DataProcessor.getMappingOAById(b.getEmployeeId());
             if (mappingOA == null || !mappingOA.getEmpolyeeName().equals(b.getEmployeeName())) {
-               logger.severe("基本工资表信息与mappingOA表信息不符！");
+               logger.severe("基本工资表信息与mappingOA表员工名称不符！员工编码为："+b.getEmployeeId());
                 return false;
             }
             if (b.getBaseSalary() < 0.00) {
-               logger.severe("基本工资数据出错，出错id为"+b.getEmployeeId());
+                String logInfo = "基本工资数据出错数值为负，出错员工id为" + b.getEmployeeId();
+                String employee = DataProcessor.employeeIdNameMap.get(b.getEmployeeId());
+               logger.severe(logInfo);
+                ErrorRecord record = new ErrorRecord(LogUtil.stage, Constant.LogLevel.ERROR.toString(),employee,b.getEmployeeId(),logInfo);
+                LogUtil.errorRecords.add(record);
                 return false;
             }
         }

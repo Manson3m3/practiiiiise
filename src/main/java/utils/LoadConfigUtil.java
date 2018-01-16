@@ -15,41 +15,75 @@ import java.util.logging.Logger;
  * Created by Tao.Jiang on 2017/11/8.
  */
 public class LoadConfigUtil {
-    private static final Logger logger= LogUtil.setLoggerHanlder(Logger.getLogger(LogUtil.MY_LOGGER),LogUtil.OUTPUTPATH);
+    private static final Logger logger = LogUtil.setLoggerHanlder(Logger.getLogger(LogUtil.MY_LOGGER), LogUtil.OUTPUTPATH);
 
     private LoadConfigUtil() {
 
     }
 
-    private static List<String > contentArrayList = getJsonContents();
+    private static final JsonObject jsonObject1 = getJson1ContentsByJson();
+    private static final JsonObject jsonObject2 = getJson2ContentsByJson();
+
+//    /**
+//     * 从json文件中读取内容，放入List并返回
+//     *
+//     * @return
+//     * @throws Exception
+//     */
+//    private static List<String> getJsonContents(String jsonPath) {
+//        ArrayList<String> contentArrayList = new ArrayList<String>();
+//        try {
+//            FileInputStream fileInputStream = new FileInputStream(jsonPath);
+//            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
+//            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+//
+//            String rowContent = null;
+//            while ((rowContent = bufferedReader.readLine()) != null) {
+//                rowContent = rowContent.trim();
+//                rowContent = rowContent.replaceAll("\"", "");
+//                rowContent = rowContent.replaceAll(",", "");
+//                if (rowContent.equals("")) {
+//                    continue;
+//                }
+//                contentArrayList.add(rowContent);
+//            }
+//            bufferedReader.close();
+//            return contentArrayList;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            logger.severe("找不到json文件");
+//        }
+//        return null;
+//    }
+
     /**
-     * 从json文件中读取内容，放入List并返回
+     * 用JsonObject获取json1文件内容
      *
      * @return
-     * @throws Exception
      */
-    private static List<String> getJsonContents() {
-        ArrayList<String> contentArrayList = new ArrayList<String>();
+    private static JsonObject getJson1ContentsByJson() {
+        JsonParser jsonParser = new JsonParser();
         try {
-            FileInputStream fileInputStream = new FileInputStream(Constant.JsonPath.JSONPATH);
-            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-            String rowContent = null;
-            while ((rowContent = bufferedReader.readLine()) != null) {
-                rowContent = rowContent.trim();
-                rowContent = rowContent.replaceAll("\"", "");
-                rowContent = rowContent.replaceAll(",", "");
-                if (rowContent.equals("")) {
-                    continue;
-                }
-                contentArrayList.add(rowContent);
-            }
-            bufferedReader.close();
-            return contentArrayList;
-        } catch (Exception e) {
+            JsonObject jsonObject = (JsonObject) jsonParser.parse(new BufferedReader(new InputStreamReader(new FileInputStream(Constant.JsonPath.JSONPATH), "UTF-8")));
+            return jsonObject;
+        } catch (JsonIOException | JsonSyntaxException | FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
-            logger.severe("找不到json文件");
+        }
+        return null;
+    }
+
+    /**
+     * 用JsonObject获取json1文件内容
+     *
+     * @return
+     */
+    private static JsonObject getJson2ContentsByJson() {
+        JsonParser jsonParser = new JsonParser();
+        try {
+            JsonObject jsonObject = (JsonObject) jsonParser.parse(new BufferedReader(new InputStreamReader(new FileInputStream(Constant.JsonPath.JSONPATH2), "UTF-8")));
+            return jsonObject;
+        } catch (JsonIOException | JsonSyntaxException | FileNotFoundException | UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -60,28 +94,16 @@ public class LoadConfigUtil {
      */
     public static SheetForm getFilesAndSheets(String handle) throws Exception {
         SheetForm sheetForm = new SheetForm();
-        List<String> contentList = contentArrayList;
-        //装载每次用“:”切割出的数组
-        String[] tempContentSplited = null;
-        try {
-            int count = 1;
-            while (count < contentList.size()) {
-                if (contentList.get(count).contains(handle)) {
-                    //向下一行找到FileName
-                    count++;
-                    tempContentSplited = contentList.get(count).split(":");
-                    sheetForm.setFileName(tempContentSplited[1]);
-                    //向下一行找到SheetName
-                    count++;
-                    tempContentSplited = contentList.get(count).split(":");
-                    sheetForm.setSheetName(tempContentSplited[1]);
-                    break;
-                }
-                count++;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        JsonObject jsonObject = new JsonObject();
+        if (handle.equals(Constant.Handle.DEPARTMENT_HANDLE)
+                || handle.equals(Constant.Handle.OA_PROJECT)
+                || handle.equals(Constant.Handle.SUBJECT_CODE)) {
+            jsonObject = jsonObject2;
+        } else {
+            jsonObject = jsonObject1;
         }
+        sheetForm.setFileName(jsonObject.get(handle).getAsJsonObject().get("FileName").getAsString());
+        sheetForm.setSheetName(jsonObject.get(handle).getAsJsonObject().get("SheetName").getAsString());
         return sheetForm;
     }
 
@@ -92,9 +114,8 @@ public class LoadConfigUtil {
      * @throws Exception
      */
     public static String getBaseDir() {
-        List<String> contentList = contentArrayList;
         String baseDir = null;
-        baseDir = contentList.get(Constant.JsonRowNum.BASEDIR_ROW_NUM).replaceAll("BaseDir:", "");
+        baseDir = jsonObject1.get("BaseDir").getAsString();
         return baseDir;
     }
 
@@ -105,9 +126,8 @@ public class LoadConfigUtil {
      * @throws Exception
      */
     public static String getYear() {
-        List<String> contentList = contentArrayList;
         String year = null;
-        year = contentList.get(Constant.JsonRowNum.YEAR_ROW_NUM).replaceAll("Year:", "");
+        year = jsonObject1.get("Year").getAsString();
         return year;
     }
 
@@ -118,58 +138,51 @@ public class LoadConfigUtil {
      * @throws Exception
      */
     public static String getMonth() {
-        List<String> contentList = contentArrayList;
         String month = null;
-        month = contentList.get(Constant.JsonRowNum.MONTH_ROW_NUM).replaceAll("Month:", "");
+        month = jsonObject1.get("Month").getAsString();
         return month;
     }
 
     /**
-     * 从读取的链表中获取文件的输出路径
-     *
-     * @return
-     * @throws Exception
-     */
-    public static String getOutputPath() {
-        String outputPath = null;
-        outputPath = JarToolUtil.getJarDir();
-        return outputPath;
-    }
-
-    /**
      * 获取新员工专用的标记
+     *
      * @return
      */
     public static String getNewStaff() {
         String newStaff = null;
-        newStaff = contentArrayList.get(Constant.JsonRowNum.NEW_STAFF_ROW_NUM).replaceAll("新员工专属:","");
+        newStaff = jsonObject1.get("新员工专属").getAsString();
         return newStaff;
     }
 
     /**
-     * 用JsonObject获取json文件内容
+     * 获取开始周数
+     * @return
+     */
+    public static String getStartDate(){
+        String startDate = null;
+        startDate = jsonObject1.get("StartDate").getAsString();
+        return startDate;
+    }
+
+    /**
+     * 获取周数
+     * @return
+     */
+    public static String getWeekNum (){
+        String weekNum = null;
+        weekNum  = jsonObject1.get("WeekNum").getAsString();
+        return weekNum;
+    }
+
+    /**
+     * 读取config2.json的BaseDir
      *
      * @return
      */
-    public static JsonObject getJsonContentsByJson() {
-        JsonParser jsonParser = new JsonParser();
-        try {
-            JsonObject jsonObject = (JsonObject) jsonParser.parse(new FileReader(Constant.JsonPath.JSONPATH));
-            jsonObject.get("BaseDir:");
-            jsonObject.get("Year").getAsInt();
-            jsonObject.get("Month").getAsInt();
-            jsonObject.get("新员工专用").getAsString();
-            jsonObject.get("Mapping表OA员工信息表").getAsJsonObject();
-            jsonObject.get("工时月报表").getAsJsonObject();
-            jsonObject.get("XX月工资原始表").getAsJsonObject();
-            jsonObject.get("XX月社保原始表").getAsJsonObject();
-            jsonObject.get("XX表").getAsJsonObject();
-            jsonObject.get("Sheet7表").getAsJsonObject();
-            return jsonObject;
-        } catch (JsonIOException | JsonSyntaxException | FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public static String getBaseDir2() {
+        String baseDir2 = null;
+        baseDir2 = jsonObject2.get("BaseDir2").getAsString();
+        return baseDir2;
     }
 
     //返回sheet信息

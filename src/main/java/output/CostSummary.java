@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 public class CostSummary {
     private static final Logger logger = LogUtil.setLoggerHanlder(Logger.getLogger(LogUtil.MY_LOGGER), LogUtil.OUTPUTPATH);
     private static final String[][] data = getOutputData();
+
     public static String[][] getOutputData() {
         String[][] xMonthCost = XMonthCostSummary.getOutputData();
         if (xMonthCost == null) {
@@ -36,7 +37,7 @@ public class CostSummary {
      * @param employeeId
      * @return
      */
-    public static String[] getOneCostDataById(String employeeId) {
+    static String[] getOneCostDataById(String employeeId) {
         if (employeeId == null) {
             return null;
         }

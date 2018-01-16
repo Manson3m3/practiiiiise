@@ -1,0 +1,82 @@
+[INFO] - 2018/01/16 09:34:37.200 - [Main.main]  
+ 		 --------------------------------第一阶段开始----------------------------- 
+
+ [INFO] - 2018/01/16 09:34:37.200 - [Main.main]  
+ 		 --------------------------------开始读取Excel表数据---------------------
+ 
+
+ [ERROR] - 2018/01/16 09:34:37.232 - [utils.ResultUtil.copyInputExcel]  
+ 		 E:\step1\\测试3.xls复制失败 
+
+ [INFO] - 2018/01/16 09:34:37.590 - [load.DataProcessor.getBaseSalaryList]  
+ 		 读取基本薪资表成功！ 
+
+ [INFO] - 2018/01/16 09:34:37.606 - [load.DataProcessor.getMappingOAList]  
+ 		 读取mappingOA列表成功！ 
+
+ [INFO] - 2018/01/16 09:34:37.622 - [load.DataProcessor.getWorkingHoursMonthReportList]  
+ 		 读取月报表成功！ 
+
+ [INFO] - 2018/01/16 09:34:37.637 - [load.DataProcessor.getMappingOAData]  
+ 		 读取mappingOA数组数据成功！ 
+
+ [INFO] - 2018/01/16 09:34:37.637 - [load.DataProcessor.getBaseSocialSecurityData]  
+ 		 读取基本社保表成功！ 
+
+ [INFO] - 2018/01/16 09:34:37.653 - [load.DataProcessor.getWorkingHoursMonthData]  
+ 		 读取月报表数组成功！ 
+
+ [INFO] - 2018/01/16 09:34:37.653 - [load.LoadInputData.getWorkTypeMap]  
+ 		 工作类型表读取且验证成功！ 
+
+ [INFO] - 2018/01/16 09:34:37.653 - [load.DataProcessor.getWorkTypeMap]  
+ 		 获取工作类型表成功！ 
+
+ [INFO] - 2018/01/16 09:34:37.668 - [load.LoadInputData.getEmployeeIdNameMap]  
+ 		 idName表读取验证成功！ 
+
+ [INFO] - 2018/01/16 09:34:37.668 - [Main.main]  
+ 		 ----------------------------------读取Excel成功-----------------------
+ 
+
+ [INFO] - 2018/01/16 09:34:37.668 - [Main.main]  
+ 		 --------------------------------开始验证各表数据-------------------------
+ 
+
+ [INFO] - 2018/01/16 09:34:37.668 - [validator.MappingOAValidator.isLegal]  
+ 		 mappingOA表检验通过！ 
+
+ [INFO] - 2018/01/16 09:34:37.668 - [validator.BaseSalaryValidator.isLegal]  
+ 		 基本工资表检验通过！ 
+
+ [INFO] - 2018/01/16 09:34:37.684 - [validator.BaseSocialSecurityValidator.isLegal]  
+ 		 基本社保表检验通过！ 
+
+ [WARNING] - 2018/01/16 09:34:37.715 - [validator.WorkHoursMonthValidator.isWeeksLegal]  
+ 		 工时月报表中钱二缺少起始日期：2017-10-09 
+
+ [WARNING] - 2018/01/16 09:34:37.715 - [validator.WorkHoursMonthValidator.isWeeksLegal]  
+ 		 工时月报表中孙三缺少起始日期：2017-10-16 
+
+ [INFO] - 2018/01/16 09:34:37.715 - [Main.main]  
+ 		 ------------------------------------验证完毕，所有表通过-------------------
+ 
+
+ [INFO] - 2018/01/16 09:34:37.731 - [Main.main]  
+ 		 ----------------------------------开始输出数据----------------------------
+ 
+
+ [ERROR] - 2018/01/16 09:34:37.731 - [utils.ExcelUtil.writeExcel]  
+ 		 E:\projects\financial-management-dev\build\classes\20180116093437\step1输出\step1输出表.xls Written Failed 
+
+ [ERROR] - 2018/01/16 09:34:37.731 - [Main.main]  
+ 		 -----------------------输出失败，请查看log-----------------------------
+ 
+
+ [INFO] - 2018/01/16 09:34:37.762 - [utils.ExcelUtil.writeExcel]  
+ 		 异常记录表 Written 
+
+ [INFO] - 2018/01/16 09:34:37.778 - [utils.ExcelUtil.writeExcel]  
+ 		 异常记录表 Written 
+
+ 

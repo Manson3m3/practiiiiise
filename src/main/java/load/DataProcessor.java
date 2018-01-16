@@ -9,6 +9,7 @@ import utils.LogUtil;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -320,4 +321,26 @@ public class DataProcessor {
         }
         return workTypeMap;
     }
+
+    /**
+     * 将set转化为字符串
+     *
+     * @param set
+     * @return
+     */
+    public static String setToStrings(Set<String> set) {
+        if (set == null || set.size() == 0) {
+            return null;
+        }
+        String string = null;
+        for (String s : set) {
+            if (string == null) {
+                string = s;
+            } else {
+                string = string + "," + s;
+            }
+        }
+        return string;
+    }
+
 }

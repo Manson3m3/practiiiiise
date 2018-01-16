@@ -1,16 +1,10 @@
 package output;
 
 import constant.Constant;
-import entity.BaseSalary;
 import entity.MappingOA;
 import load.DataProcessor;
-import utils.LogUtil;
-import validator.BaseSalaryValidator;
-import validator.BaseSocialSecurityValidator;
-import validator.MappingOAValidator;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * X月成本汇总
